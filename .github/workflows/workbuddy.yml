@@ -2,10 +2,10 @@ name: 🌱 WorkBuddy Daily
 
 on:
   schedule:
-    # 北京时间 07:00 / 12:00 / 23:30（GitHub cron 用 UTC，北京时间 = UTC+8）
-    - cron: "0 23 * * *"     # 07:00
-    - cron: "0 4 * * *"      # 12:00
-    - cron: "30 15 * * *"    # 23:30
+    # 北京时间 06:30 / 13:30 / 03:30（GitHub cron 用 UTC，北京时间 = UTC+8）
+    - cron: "30 22 * * *"     # 06:30
+    - cron: "30 5 * * *"      # 13:30
+    - cron: "30 19 * * *"     # 03:30 (夜猫子 23:00-08:00 窗口)
   workflow_dispatch:          # 支持手动触发
 
 permissions:
@@ -18,9 +18,9 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 45   # mp 对话任务按真人节奏上报（每条 45s±10s），账号多时耗时更长
+    timeout-minutes: 45
     env:
-      TZ: Asia/Shanghai   # runner 默认 UTC：不加会把日志时间与补签日期算错一天
+      TZ: Asia/Shanghai
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,7 +46,6 @@ jobs:
           WORKBUDDY_MP_GAP: ${{ secrets.WORKBUDDY_MP_GAP }}
         run: python workbuddy_daily.py
 
-      # ⚠️ 仅在【私有仓库】中持久化令牌状态；公开仓库会跳过，避免 RT 泄露
       - name: Persist token state (private repo only)
         if: always() && github.event.repository.private == true
         run: |
