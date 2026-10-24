@@ -1,6 +1,8 @@
 name: 🌱 WorkBuddy Daily
 
 
+
+
 on:
   schedule:
     # 北京时间 07:00 / 12:00 / 23:30（GitHub cron 用 UTC，北京时间 = UTC+8）
@@ -10,13 +12,19 @@ on:
   workflow_dispatch:          # 支持手动触发
 
 
+
+
 permissions:
   contents: write
+
+
 
 
 concurrency:
   group: workbuddy
   cancel-in-progress: false
+
+
 
 
 jobs:
@@ -30,14 +38,9 @@ jobs:
         uses: actions/checkout@v4
 
 
+
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-
-      - name: Install deps
-        run: pip install requests
-
-
-      - name: Restore benefit guard
