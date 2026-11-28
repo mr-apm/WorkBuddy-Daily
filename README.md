@@ -6,7 +6,7 @@
 
 **WorkBuddy 成长中心 · 全能签到脚本 · 单文件自包含（含国际版每日活跃与只读任务状态）**
 
-> 当前版本：**v58**（2026-11-24） · 最新更新：统一六语文档中的国际版任务口径，默认只读核对，实验开关才尝试执行且不保证结算
+> 当前版本：**v59**（2026-11-26） · 最新更新：修复国际版 PushPlus 通知变量传递，兼容 `PUSHPLUS_TOKEN`
 
 [简体中文](README.md) · [English](docs/README.en.md) · [繁體中文](docs/README.zh-Hant.md) · [日本語](docs/README.ja.md) · [한국어](docs/README.ko.md) · [Português (BR)](docs/README.pt-BR.md)
 
@@ -158,6 +158,7 @@ pip3 install requests
 | `WORKBUDDY_TOKEN` | ⬜ | 国际版单账号兜底（登录态） |
 | `WORKBUDDY_INTL_MODELS` | ⬜ | 可选，国际版保活模型链，逗号分隔 |
 | `PUSHPLUS_TOKEN` | ⬜ | 可选，PushPlus 推送令牌 |
+| `PLUSPLUS_TOKEN` | ⬜ | 国际版 PushPlus 别名；也兼容 `PUSHPLUS_TOKEN` |
 | `BARK_URL` | ⬜ | 可选，Bark 推送（iOS），如 `https://api.day.app/xxxxxxxx` |
 | `WXPUSHER_APP_TOKEN` | ⬜ | 可选，WxPusher 应用令牌（`AT_` 开头），在 wxpusher.zjiecode.com 创建应用后获得 |
 | `WXPUSHER_UID` | ⬜ | 可选，WxPusher 用户 UID（`UID_` 开头），多个用逗号/分号分隔 |
@@ -426,6 +427,8 @@ python daily_forward.py daily.log --wx
 > | 值是 `{"$wbEncrypted":1,…}` 或含 `"envelope"` | **新版客户端加密信封**（5.6.2+ AtRestEncryption）——解密密钥不落盘（只在客户端进程内存），改用 `python workbuddy_login.py` 短信登录取明文 |
 >
 > 另外两种体检看不出来的情况：③ 该 RT 已被其他工具（面板/网关/另一台机器）轮换过；④ 粘的是 `CodeBuddyExtension\Data\Public\auth` 里**别的应用**的 token。最稳的做法：`python workbuddy_login.py` 重新登录拿最新一行。
+
+> ⚠️ **日志出现 `invalid_grant: refresh token revoked` 怎么办？** 这不是格式错误，而是服务端已经轮换或撤销了这个 RT，旧 RT 不能再使用。青龙用户请把 `WORKBUDDY_STATE_DIR` 指到持久目录（例如 `/ql/data/workbuddy_state`），确认同一账号没有两个定时任务或两台机器同时续期；然后重新运行 `python workbuddy_login.py`，把最新输出的 `手机号:AT:RT` 更新到环境变量。公开 Actions/Fork 不会提交轮换后的 `wb_refresh_tokens.json`，需要手动维护 Secret；私有仓库或持久状态目录才会自动保存新 RT。若更新后仍立即报 revoked，先检查是否有其他工具正在使用同一账号。
 
 ---
 
@@ -755,7 +758,7 @@ available for personal users」（2026-10-07 实测口径）。脚本会**自动
 ---
 
 ## 📦 版本与发布
-- **当前发布版**：`v58`（2026-11-24，国际版任务文档口径统一）· **脚本版本**：`v3.55` · **登录工具**：`v2.1`
+- **当前发布版**：`v59`（2026-11-26，国际版 PushPlus 变量传递修复）· **脚本版本**：`v3.55` · **登录工具**：`v2.1`
 
 - **每次更新单独发一个 Release**：编号 `v1` → `v2` → `v3` …依次递增，**历史版本保留可下载，不覆盖、不合并**（方便回看与回退）
 
